@@ -24,6 +24,8 @@ hypre_memory_tracker(void)
 }
 #endif
 
+FILE* global_file = NULL;
+
 /* global variable _hypre_handle:
  * Outside this file, do NOT access it directly,
  * but use hypre_handle() instead (see handle.h) */
@@ -257,6 +259,12 @@ HYPRE_Init(void)
    }
 #endif
 
+   int rank;
+   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+   char filename[50];
+   snprintf(filename, 50, "data_extract%d.txt", rank);
+   global_file = fopen(filename,"w");
+
    if (!_hypre_handle)
    {
       _hypre_handle = hypre_HandleCreate();
@@ -351,6 +359,8 @@ HYPRE_Finalize(void)
 #endif
 
    hypre_HandleDestroy(_hypre_handle);
+
+   fclose(global_file);
 
    _hypre_handle = NULL;
 

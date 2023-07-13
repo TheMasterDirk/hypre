@@ -2886,6 +2886,7 @@ HYPRE_Int hypre_SchwarzSetDofFunc ( void *data, HYPRE_Int *dof_func );
 /* par_stats.c */
 HYPRE_Int hypre_BoomerAMGSetupStats ( void *amg_vdata, hypre_ParCSRMatrix *A );
 HYPRE_Int hypre_BoomerAMGWriteSolverParams ( void *data );
+HYPRE_Int hypre_BoomerAMGMatTimes( void *data );
 
 /* par_strength.c */
 HYPRE_Int hypre_BoomerAMGCreateS ( hypre_ParCSRMatrix *A, HYPRE_Real strength_threshold,

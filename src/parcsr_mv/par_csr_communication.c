@@ -71,6 +71,7 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
    switch (job_type)
    {
       case HYPRE_COMM_PKG_JOB_COMPLEX:
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Complex), (void *) requests);
          num_bytes_send = sizeof(HYPRE_Complex) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
          num_bytes_recv = sizeof(HYPRE_Complex) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
          send_buff = hypre_TAlloc(HYPRE_Complex, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
@@ -84,6 +85,7 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Recv_init( (HYPRE_Complex *)recv_buff + vec_start, vec_len, HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + i );
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
          }
          for (i = 0; i < num_sends; ++i)
          {
@@ -92,10 +94,12 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Send_init( (HYPRE_Complex *)send_buff + vec_start, vec_len, HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + num_recvs + i );
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
          }
          break;
 
       case HYPRE_COMM_PKG_JOB_COMPLEX_TRANSPOSE:
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Complex), (void *) requests);
          num_bytes_recv = sizeof(HYPRE_Complex) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
          num_bytes_send = sizeof(HYPRE_Complex) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
          recv_buff = hypre_TAlloc(HYPRE_Complex, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
@@ -109,6 +113,7 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Recv_init( (HYPRE_Complex *)recv_buff + vec_start, vec_len, HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + i );
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
          }
          for (i = 0; i < num_recvs; ++i)
          {
@@ -117,10 +122,12 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Send_init( (HYPRE_Complex *)send_buff + vec_start, vec_len, HYPRE_MPI_COMPLEX,
                                  ip, 0, comm, requests + num_sends + i );
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
          }
          break;
 
       case HYPRE_COMM_PKG_JOB_INT:
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Int), (void *) requests);
          num_bytes_send = sizeof(HYPRE_Int) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
          num_bytes_recv = sizeof(HYPRE_Int) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
          send_buff = hypre_TAlloc(HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
@@ -134,6 +141,7 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Recv_init( (HYPRE_Int *)recv_buff + vec_start, vec_len, HYPRE_MPI_INT,
                                  ip, 0, comm, requests + i );
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
          }
          for (i = 0; i < num_sends; ++i)
          {
@@ -142,10 +150,12 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Send_init( (HYPRE_Int *)send_buff + vec_start, vec_len, HYPRE_MPI_INT,
                                  ip, 0, comm, requests + num_recvs + i );
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
          }
          break;
 
       case HYPRE_COMM_PKG_JOB_INT_TRANSPOSE:
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Int), (void *) requests);
          num_bytes_recv = sizeof(HYPRE_Int) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
          num_bytes_send = sizeof(HYPRE_Int) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
          recv_buff = hypre_TAlloc(HYPRE_Int, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
@@ -159,6 +169,7 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Recv_init( (HYPRE_Int *)recv_buff + vec_start, vec_len, HYPRE_MPI_INT,
                                  ip, 0, comm, requests + i );
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
          }
          for (i = 0; i < num_recvs; ++i)
          {
@@ -167,10 +178,12 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
             hypre_MPI_Send_init( (HYPRE_Int *)send_buff + vec_start, vec_len, HYPRE_MPI_INT,
                                  ip, 0, comm, requests + num_sends + i );
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
          }
          break;
 
       case HYPRE_COMM_PKG_JOB_BIGINT:
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_BigInt), (void *) requests);
          num_bytes_send = sizeof(HYPRE_BigInt) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
          num_bytes_recv = sizeof(HYPRE_BigInt) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
          send_buff = hypre_TAlloc(HYPRE_BigInt, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
@@ -185,6 +198,7 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             hypre_MPI_Recv_init( (HYPRE_BigInt *)recv_buff + (HYPRE_BigInt)vec_start, vec_len,
                                  HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + i );
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
          }
          for (i = 0; i < num_sends; ++i)
          {
@@ -194,10 +208,12 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             hypre_MPI_Send_init( (HYPRE_BigInt *)send_buff + (HYPRE_BigInt)vec_start, vec_len,
                                  HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + num_recvs + i);
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
          }
          break;
 
       case HYPRE_COMM_PKG_JOB_BIGINT_TRANSPOSE:
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_BigInt), (void *) requests);
          num_bytes_recv = sizeof(HYPRE_BigInt) * hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends);
          num_bytes_send = sizeof(HYPRE_BigInt) * hypre_ParCSRCommPkgRecvVecStart(comm_pkg, num_recvs);
          recv_buff = hypre_TAlloc(HYPRE_BigInt, hypre_ParCSRCommPkgSendMapStart(comm_pkg, num_sends),
@@ -212,16 +228,17 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
             hypre_MPI_Recv_init( (HYPRE_BigInt *)recv_buff + (HYPRE_BigInt)vec_start, vec_len,
                                  HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + i );
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
          }
          for (i = 0; i < num_recvs; ++i)
          {
             HYPRE_Int ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
             HYPRE_Int vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
             HYPRE_Int vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
-
             hypre_MPI_Send_init( (HYPRE_BigInt *)send_buff + (HYPRE_BigInt)vec_start, vec_len,
                                  HYPRE_MPI_BIG_INT,
                                  ip, 0, comm, requests + num_sends + i);
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
          }
          break;
       default:
@@ -229,6 +246,7 @@ hypre_ParCSRPersistentCommHandleCreate( HYPRE_Int job, hypre_ParCSRCommPkg *comm
          break;
    } // switch (job_type)
 
+   hypre_fprintf(global_file, "\n");
    hypre_ParCSRCommHandleRecvDataBuffer(comm_handle) = recv_buff;
    hypre_ParCSRCommHandleSendDataBuffer(comm_handle) = send_buff;
    hypre_ParCSRCommHandleNumSendBytes(comm_handle)   = num_bytes_send;
@@ -317,6 +335,10 @@ hypre_ParCSRPersistentCommHandleWait( hypre_ParCSRPersistentCommHandle *comm_han
 
    if (hypre_ParCSRCommHandleNumRequests(comm_handle) > 0)
    {
+      int num_comms = hypre_ParCSRCommHandleNumRequests(comm_handle);
+      MPI_Request* reqs = hypre_ParCSRCommHandleRequests(comm_handle);
+      hypre_fprintf(global_file, "PWait:%d:%p\n", num_comms, (void *) (reqs));
+
       HYPRE_Int ret = hypre_MPI_Waitall(hypre_ParCSRCommHandleNumRequests(comm_handle),
                                         hypre_ParCSRCommHandleRequests(comm_handle),
                                         hypre_MPI_STATUSES_IGNORE);
@@ -488,6 +510,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
    {
       case  1:
       {
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Complex), (void *) requests);
          HYPRE_Complex *d_send_data = (HYPRE_Complex *) send_data;
          HYPRE_Complex *d_recv_data = (HYPRE_Complex *) recv_data;
          for (i = 0; i < num_recvs; i++)
@@ -495,6 +518,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
             hypre_MPI_Irecv(&d_recv_data[vec_start], vec_len, HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
@@ -503,6 +527,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
             hypre_MPI_Isend(&d_send_data[vec_start], vec_len, HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
@@ -510,6 +535,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
       }
       case  2:
       {
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Complex), (void *) requests);
          HYPRE_Complex *d_send_data = (HYPRE_Complex *) send_data;
          HYPRE_Complex *d_recv_data = (HYPRE_Complex *) recv_data;
          for (i = 0; i < num_sends; i++)
@@ -517,6 +543,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
             hypre_MPI_Irecv(&d_recv_data[vec_start], vec_len, HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
@@ -525,6 +552,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
             hypre_MPI_Isend(&d_send_data[vec_start], vec_len, HYPRE_MPI_COMPLEX,
                             ip, 0, comm, &requests[j++]);
          }
@@ -532,6 +560,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
       }
       case  11:
       {
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Int), (void *) requests);
          HYPRE_Int *i_send_data = (HYPRE_Int *) send_data;
          HYPRE_Int *i_recv_data = (HYPRE_Int *) recv_data;
          for (i = 0; i < num_recvs; i++)
@@ -539,6 +568,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
             hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
@@ -547,6 +577,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
             hypre_MPI_Isend(&i_send_data[vec_start], vec_len, HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
@@ -554,6 +585,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
       }
       case  12:
       {
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_Int), (void *) requests);
          HYPRE_Int *i_send_data = (HYPRE_Int *) send_data;
          HYPRE_Int *i_recv_data = (HYPRE_Int *) recv_data;
          for (i = 0; i < num_sends; i++)
@@ -561,6 +593,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
             hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
@@ -569,6 +602,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
             hypre_MPI_Isend(&i_send_data[vec_start], vec_len, HYPRE_MPI_INT,
                             ip, 0, comm, &requests[j++]);
          }
@@ -576,6 +610,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
       }
       case  21:
       {
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_BigInt), (void *) requests);
          HYPRE_BigInt *i_send_data = (HYPRE_BigInt *) send_data;
          HYPRE_BigInt *i_recv_data = (HYPRE_BigInt *) recv_data;
          for (i = 0; i < num_recvs; i++)
@@ -583,6 +618,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
             hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
@@ -591,6 +627,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
             hypre_MPI_Isend(&i_send_data[vec_start], vec_len, HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
@@ -598,6 +635,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
       }
       case  22:
       {
+         hypre_fprintf(global_file, "Job %d:%p:", sizeof(HYPRE_BigInt), (void *) requests);
          HYPRE_BigInt *i_send_data = (HYPRE_BigInt *) send_data;
          HYPRE_BigInt *i_recv_data = (HYPRE_BigInt *) recv_data;
          for (i = 0; i < num_sends; i++)
@@ -605,6 +643,7 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             vec_start = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgSendMapStart(comm_pkg, i + 1) - vec_start;
             ip = hypre_ParCSRCommPkgSendProc(comm_pkg, i);
+            hypre_fprintf(global_file, "R%d|%d,", ip, vec_len);
             hypre_MPI_Irecv(&i_recv_data[vec_start], vec_len, HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
@@ -613,12 +652,14 @@ hypre_ParCSRCommHandleCreate_v2 ( HYPRE_Int            job,
             ip = hypre_ParCSRCommPkgRecvProc(comm_pkg, i);
             vec_start = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i);
             vec_len = hypre_ParCSRCommPkgRecvVecStart(comm_pkg, i + 1) - vec_start;
+            hypre_fprintf(global_file,"S%d|%d,", ip, vec_len);
             hypre_MPI_Isend(&i_send_data[vec_start], vec_len, HYPRE_MPI_BIG_INT,
                             ip, 0, comm, &requests[j++]);
          }
          break;
       }
    }
+   hypre_fprintf(global_file, "\n");
    /*--------------------------------------------------------------------
     * set up comm_handle and return
     *--------------------------------------------------------------------*/
@@ -668,6 +709,10 @@ hypre_ParCSRCommHandleDestroy( hypre_ParCSRCommHandle *comm_handle )
 #if defined(HYPRE_USING_NVTX)
       hypre_GpuProfilingPushRange("hypre_MPI_Waitall");
 #endif
+      int num_comms = hypre_ParCSRCommHandleNumRequests(comm_handle);
+      MPI_Request* reqs = hypre_ParCSRCommHandleRequests(comm_handle);
+      hypre_fprintf(global_file, "NBWait:%d:%p\n", num_comms, (void *) reqs);
+
       hypre_MPI_Waitall(hypre_ParCSRCommHandleNumRequests(comm_handle),
                         hypre_ParCSRCommHandleRequests(comm_handle), status0);
 #if defined(HYPRE_USING_NVTX)

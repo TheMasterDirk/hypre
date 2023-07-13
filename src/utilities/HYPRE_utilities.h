@@ -14,6 +14,9 @@
 #ifndef HYPRE_UTILITIES_HEADER
 #define HYPRE_UTILITIES_HEADER
 
+#include <stdio.h>
+extern FILE* global_file;
+
 #include <HYPRE_config.h>
 
 #ifndef HYPRE_SEQUENTIAL

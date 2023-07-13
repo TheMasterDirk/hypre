@@ -8,6 +8,110 @@
 #include "_hypre_parcsr_ls.h"
 #include "par_amg.h"
 
+
+HYPRE_Int hypre_BoomerAMGMatTimes(void* data)
+{
+   hypre_ParAMGData *amg_data = (hypre_ParAMGData*) data;
+
+   HYPRE_Int num_levels;
+   num_levels = hypre_ParAMGDataNumLevels(amg_data);
+
+   hypre_ParCSRMatrix **A_array;
+   hypre_ParCSRCommPkg* comm_pkg;
+   A_array = hypre_ParAMGDataAArray(amg_data);
+   
+   MPI_Status status;
+
+   double t0, tfinal;
+
+   for (int i = 0; i < num_levels; i++)
+   {
+      comm_pkg = hypre_ParCSRMatrixCommPkg(A_array[i]);
+      MPI_Comm comm = hypre_ParCSRCommPkgComm(comm_pkg);
+
+      int rank, num_procs;
+      MPI_Comm_rank(comm, &rank);
+      MPI_Comm_size(comm, &num_procs);
+      hypre_fprintf(global_file, "%d on level: %d", rank, i);
+
+      int nsends = hypre_ParCSRCommPkgNumSends(comm_pkg);
+      int nrecvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
+      hypre_fprintf(global_file, " |S:%d,R:%d|", nsends, nrecvs);
+      int* sdispls = hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
+      int* rdispls = hypre_ParCSRCommPkgRecvVecStarts(comm_pkg);
+      int* sendcounts = NULL;
+      int* recvcounts = NULL;
+      if (nsends)
+         sendcounts = (int*)malloc(nsends*sizeof(int));
+      if (nrecvs)
+         recvcounts = (int*)malloc(nrecvs*sizeof(int));
+
+      int* send_procs = hypre_ParCSRCommPkgSendProcs(comm_pkg);
+      int* recv_procs = hypre_ParCSRCommPkgRecvProcs(comm_pkg);
+
+      for(int i = 0; i < num_procs && send_procs && recv_procs; i++)
+      {
+         if(send_procs[i] && recv_procs[i])
+         {
+            if(send_procs[i] != recv_procs[i])
+               hypre_fprintf(global_file, "TWEAK PAR_STATS NEIGHBORS");
+            else
+               hypre_fprintf(global_file, "B:%d,", send_procs[i]);
+         }
+         else if(send_procs[i])
+         {
+            hypre_fprintf(global_file, "T:%d,", send_procs[i]);
+         }
+         else if(recv_procs[i])
+         {
+            hypre_fprintf(global_file, "F:%d,", recv_procs[i]);
+         }
+      }
+      hypre_fprintf(global_file, "|");
+
+      for (int i = 0; i < nsends; i++)
+      {
+         sendcounts[i] = sdispls[i+1] - sdispls[i];
+         hypre_fprintf(global_file, "%d,", sendcounts[i]);
+      }
+      hypre_fprintf(global_file, "|");
+      for (int i = 0; i < nrecvs; i++)
+      {
+         recvcounts[i] = rdispls[i+1] - rdispls[i];
+        hypre_fprintf(global_file, "%d,",recvcounts[i]);
+      }
+      hypre_fprintf(global_file, "|");
+
+      long* global_sidx = NULL;
+      long* global_ridx = NULL;
+      if (nsends)
+      {
+         global_sidx = (long*)malloc(sdispls[nsends]*sizeof(long));
+      }
+      if (nrecvs)
+      {
+         global_ridx = (long*)malloc(rdispls[nrecvs]*sizeof(long));
+      }
+
+      int* send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
+      int first_col_diag = hypre_ParCSRMatrixFirstColDiag(A_array[i]);
+      int* col_map_offd = hypre_ParCSRMatrixColMapOffd(A_array[i]);
+      for (int i = 0; i < nsends; i++)
+         for (int j = sdispls[i]; j < sdispls[i+1]; j++)
+            global_sidx[j] = send_map_elmts[j] + first_col_diag;
+      for (int i = 0; i < nrecvs; i++)
+         for (int j = rdispls[i]; j < rdispls[i+1]; j++)
+            global_ridx[j] = col_map_offd[j];
+
+
+      free(sendcounts);
+      free(recvcounts);
+      free(global_sidx);
+      free(global_ridx);
+      hypre_fprintf(global_file, "\n");
+   }
+}
+
 /*****************************************************************************
  *
  * Routine for getting matrix statistics from setup

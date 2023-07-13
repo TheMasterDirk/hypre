@@ -418,5 +418,7 @@ hypre_BoomerAMGSolve( void               *amg_vdata,
    }
    HYPRE_ANNOTATE_FUNC_END;
 
+   hypre_BoomerAMGMatTimes(amg_vdata);
+
    return hypre_error_flag;
 }
