@@ -37,8 +37,8 @@ HYPRE_Int hypre_BoomerAMGMatTimes(void* data)
       int nsends = hypre_ParCSRCommPkgNumSends(comm_pkg);
       int nrecvs = hypre_ParCSRCommPkgNumRecvs(comm_pkg);
       hypre_fprintf(global_file, " |S:%d,R:%d|", nsends, nrecvs);
-      int* sdispls = hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
-      int* rdispls = hypre_ParCSRCommPkgRecvVecStarts(comm_pkg);
+      HYPRE_Int* sdispls = hypre_ParCSRCommPkgSendMapStarts(comm_pkg);
+      HYPRE_Int* rdispls = hypre_ParCSRCommPkgRecvVecStarts(comm_pkg);
       int* sendcounts = NULL;
       int* recvcounts = NULL;
       if (nsends)
@@ -46,8 +46,8 @@ HYPRE_Int hypre_BoomerAMGMatTimes(void* data)
       if (nrecvs)
          recvcounts = (int*)malloc(nrecvs*sizeof(int));
 
-      int* send_procs = hypre_ParCSRCommPkgSendProcs(comm_pkg);
-      int* recv_procs = hypre_ParCSRCommPkgRecvProcs(comm_pkg);
+      HYPRE_Int* send_procs = hypre_ParCSRCommPkgSendProcs(comm_pkg);
+      HYPRE_Int* recv_procs = hypre_ParCSRCommPkgRecvProcs(comm_pkg);
 
       for(int i = 0; i < num_procs && send_procs && recv_procs; i++)
       {
@@ -93,9 +93,9 @@ HYPRE_Int hypre_BoomerAMGMatTimes(void* data)
          global_ridx = (long*)malloc(rdispls[nrecvs]*sizeof(long));
       }
 
-      int* send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
-      int first_col_diag = hypre_ParCSRMatrixFirstColDiag(A_array[i]);
-      int* col_map_offd = hypre_ParCSRMatrixColMapOffd(A_array[i]);
+      HYPRE_Int* send_map_elmts = hypre_ParCSRCommPkgSendMapElmts(comm_pkg);
+      HYPRE_Int first_col_diag = hypre_ParCSRMatrixFirstColDiag(A_array[i]);
+      HYPRE_Int* col_map_offd = hypre_ParCSRMatrixColMapOffd(A_array[i]);
       for (int i = 0; i < nsends; i++)
          for (int j = sdispls[i]; j < sdispls[i+1]; j++)
             global_sidx[j] = send_map_elmts[j] + first_col_diag;
