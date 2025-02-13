@@ -286,7 +286,7 @@ function(setup_tpl LIBNAME)
         list(APPEND HYPRE_DEPENDENCY_DIRS "${${LIBNAME}_ROOT}")
         set(HYPRE_DEPENDENCY_DIRS "${HYPRE_DEPENDENCY_DIRS}" CACHE INTERNAL "" FORCE)
 
-        if(${LIBNAME} STREQUAL "caliper")
+        if(${LIBNAME} STREQUAL "caliper" OR ${LIBNAME} STREQUAL "vernier")
           set(HYPRE_NEEDS_CXX TRUE PARENT_SCOPE)
         endif()
 

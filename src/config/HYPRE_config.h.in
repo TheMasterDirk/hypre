@@ -163,6 +163,9 @@
 /* Define to 1 if Caliper instrumentation is enabled */
 #undef HYPRE_USING_CALIPER
 
+/* Define to 1 for Vernier*/
+#undef HYPRE_USING_VERNIER
+
 /* Define to 1 if using cuBLAS */
 #undef HYPRE_USING_CUBLAS
 

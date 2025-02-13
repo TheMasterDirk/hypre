@@ -74,6 +74,9 @@
 /* Use Caliper instrumentation */
 #cmakedefine HYPRE_USING_CALIPER 1
 
+/* Use Vernier */
+#cmakedefine HYPRE_USING_VERNIER 1
+
 /* Use UMPIRE */
 #cmakedefine HYPRE_USING_UMPIRE 1
 

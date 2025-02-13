@@ -1865,6 +1865,9 @@ extern "C++"
 #ifdef __cplusplus
 }
 #endif
+#ifdef HYPRE_USING_VERNIER
+#include <vernier.h>
+#endif
 
 #define HYPRE_ANNOTATE_FUNC_BEGIN          CALI_MARK_FUNCTION_BEGIN
 #define HYPRE_ANNOTATE_FUNC_END            CALI_MARK_FUNCTION_END
@@ -1872,6 +1875,22 @@ extern "C++"
 #define HYPRE_ANNOTATE_LOOP_END(id)        CALI_MARK_LOOP_END(id)
 #define HYPRE_ANNOTATE_ITER_BEGIN(id, it)  CALI_MARK_ITERATION_BEGIN(id, it)
 #define HYPRE_ANNOTATE_ITER_END(id)        CALI_MARK_ITERATION_END(id)
+#ifdef HYPRE_USING_VERNIER
+#define HYPRE_ANNOTATE_REGION_BEGIN(...)\
+{\
+   char hypre__markname[1024];\
+   hypre_sprintf(hypre__markname, __VA_ARGS__);\
+   CALI_MARK_BEGIN(hypre__markname);\
+   begin_pattern(hypre__markname); \
+}
+#define HYPRE_ANNOTATE_REGION_END(...)\
+{\
+   char hypre__markname[1024];\
+   hypre_sprintf(hypre__markname, __VA_ARGS__);\
+   end_pattern(); \
+   CALI_MARK_END(hypre__markname);\
+}
+#else
 #define HYPRE_ANNOTATE_REGION_BEGIN(...)\
 {\
    char hypre__markname[1024];\
@@ -1884,6 +1903,7 @@ extern "C++"
    hypre_sprintf(hypre__markname, __VA_ARGS__);\
    CALI_MARK_END(hypre__markname);\
 }
+#endif
 #define HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)\
 {\
    char hypre__levelname[16];\
@@ -3946,3 +3966,4 @@ HYPRE_Int hypre_mm_read_mtx_crd_size(FILE *f, HYPRE_Int *M, HYPRE_Int *N, HYPRE_
 #endif
 
 #endif
+

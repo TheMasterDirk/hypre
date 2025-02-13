@@ -188,6 +188,7 @@ set_hypre_option(TPL  HYPRE_ENABLE_SUPERLU              "Use TPL SuperLU" OFF)
 set_hypre_option(TPL  HYPRE_ENABLE_DSUPERLU             "Use TPL SuperLU_Dist" OFF)
 set_hypre_option(TPL  HYPRE_ENABLE_MAGMA                "Use TPL MAGMA" OFF)
 set_hypre_option(TPL  HYPRE_ENABLE_CALIPER              "Use TPL Caliper" OFF)
+set_hypre_option(TPL  HYPRE_ENABLE_VERNIER              "Use TPL Vernier" OFF)
 set_hypre_option(SKIP TPL_UMPIRE_LIBRARIES              "Absolute paths to Umpire link libraries [Optional]." "")
 set_hypre_option(SKIP TPL_UMPIRE_INCLUDE_DIRS           "Absolute paths to Umpire include directories [Optional]." "")
 set_hypre_option(SKIP TPL_SUPERLU_LIBRARIES             "Absolute paths to SuperLU link libraries [Optional]." "")
@@ -198,6 +199,8 @@ set_hypre_option(SKIP TPL_MAGMA_LIBRARIES               "Absolute paths to MAGMA
 set_hypre_option(SKIP TPL_MAGMA_INCLUDE_DIRS            "Absolute paths to MAGMA include directories [Optional]." "")
 set_hypre_option(SKIP TPL_CALIPER_LIBRARIES             "Absolute paths to Caliper link libraries [Optional]." "")
 set_hypre_option(SKIP TPL_CALIPER_INCLUDE_DIRS          "Absolute paths to Caliper include directories [Optional]." "")
+set_hypre_option(SKIP TPL_VERNIER_LIBRARIES             "Absolute paths to Vernier link libraries [Optional]." "")
+set_hypre_option(SKIP TPL_VERNIER_INCLUDE_DIRS          "Absolute paths to Vernier include directories [Optional]." "")
 set_hypre_option(SKIP TPL_BLAS_LIBRARIES                "Absolute paths to BLAS link libraries [Optional]." "")
 set_hypre_option(SKIP TPL_LAPACK_LIBRARIES              "Absolute paths to LAPACK link libraries [Optional]." "")
 set_hypre_option(SKIP TPL_FEI_INCLUDE_DIRS              "Absolute paths to FEI include directories [Optional]." "")
@@ -240,6 +243,7 @@ set_internal_hypre_option(USING HIP)
 set_internal_hypre_option(USING SYCL)
 set_internal_hypre_option(USING MAGMA)
 set_internal_hypre_option(USING CALIPER)
+set_internal_hypre_option(USING VERNIER)
 
 # Check for conflicting options
 ensure_options_differ(HYPRE_ENABLE_SINGLE HYPRE_ENABLE_LONG_DOUBLE)
@@ -358,11 +362,6 @@ if (HYPRE_ENABLE_UMPIRE_PINNED)
   set(HYPRE_USING_UMPIRE_PINNED ON CACHE INTERNAL "")
 endif ()
 
-# Set MPI compile flags
-if (HYPRE_ENABLE_MPI)
-  configure_mpi_target()
-endif ()
-
 # Set OpenMP compile flags
 if (HYPRE_ENABLE_OPENMP)
   find_package(OpenMP REQUIRED)
@@ -432,12 +431,18 @@ setup_tpl(superlu)
 setup_tpl(dsuperlu)
 setup_tpl(magma)
 setup_tpl(caliper)
+setup_tpl(vernier)
 setup_tpl(umpire)
 
 # Some TPLs need C++ to be enabled (GPU already enables C++ by default)
 if(HYPRE_NEEDS_CXX AND NOT HYPRE_USING_GPU)
   enable_language(CXX)
 endif()
+
+# Set MPI compile flags
+if (HYPRE_ENABLE_MPI)
+  configure_mpi_target()
+endif ()
 
 # Print the directories used to hint the user about the active TPLs
 if (HYPRE_DEPENDENCY_DIRS)
