@@ -53,6 +53,20 @@ extern "C++"
    end_pattern(); \
    CALI_MARK_END(hypre__markname);\
 }
+#define HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)\
+{\
+   char hypre__levelname[16];\
+   hypre_sprintf(hypre__levelname, "MG level %d", lvl);\
+   CALI_MARK_BEGIN(hypre__levelname);\
+   begin_pattern(hypre__levelname); \
+}
+#define HYPRE_ANNOTATE_MGLEVEL_END(lvl)\
+{\
+   char hypre__levelname[16];\
+   hypre_sprintf(hypre__levelname, "MG level %d", lvl);\
+   end_pattern(); \
+   CALI_MARK_END(hypre__levelname);\
+}
 #else
 #define HYPRE_ANNOTATE_REGION_BEGIN(...)\
 {\
@@ -66,7 +80,6 @@ extern "C++"
    hypre_sprintf(hypre__markname, __VA_ARGS__);\
    CALI_MARK_END(hypre__markname);\
 }
-#endif
 #define HYPRE_ANNOTATE_MGLEVEL_BEGIN(lvl)\
 {\
    char hypre__levelname[16];\
@@ -79,6 +92,7 @@ extern "C++"
    hypre_sprintf(hypre__levelname, "MG level %d", lvl);\
    CALI_MARK_END(hypre__levelname);\
 }
+#endif
 
 #else
 
